@@ -6,6 +6,7 @@ import { AddRoleDto } from './dto/add-role.dto';
 import { BanUserDto } from './dto/ban-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './user.model';
+import * as bcryptjs from 'bcryptjs'
 
 @Injectable()
 export class UsersService {
@@ -20,8 +21,13 @@ export class UsersService {
             throw new HttpException(`User with the email ${dto.email} already exist.`, HttpStatus.BAD_REQUEST);
         }
 
-        const user = await this.userRepository.create(dto);
-        const role = await this.roleService.getRoleByValue("USER");
+        const hashPasssword = await bcryptjs.hash(dto.password, 5);
+        const user = await this.userRepository.create({...dto, password: hashPasssword});
+        let role = await this.roleService.getRoleByValue("USER");
+        if(!role) {
+            role = await this.roleService.createRole({value: "USER", description: "Some description"});
+        }
+
         await user.$set('roles', [role.id])
         user.roles = [role]
         return user;
