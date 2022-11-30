@@ -15,6 +15,11 @@ export class UsersService {
     }
 
     async createUser(dto: CreateUserDto){
+        const users = await this.userRepository.findAll({where: {email: dto.email}});
+        if(users.length > 0){
+            throw new HttpException(`User with the email ${dto.email} already exist.`, HttpStatus.BAD_REQUEST);
+        }
+
         const user = await this.userRepository.create(dto);
         const role = await this.roleService.getRoleByValue("USER");
         await user.$set('roles', [role.id])

@@ -21,9 +21,9 @@ export class UsersController {
     @ApiOperation({summary: 'Get all users'})
     @ApiResponse({status: 200, type: [User]})
     // @UseGuards(JwtAuthGuard)
-    @UseGuards(JwtAuthPassportGuard)
-    @Roles("ADMIN")
-    @UseGuards(RolesGuard)
+    // @UseGuards(JwtAuthPassportGuard)
+    // @Roles("ADMIN")
+    // @UseGuards(RolesGuard)
     @Get()
     async getAllUsers(){
         return this.userService.getAllUsers();

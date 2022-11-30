@@ -26,9 +26,9 @@ import * as path from 'path'
       dialect: 'postgres',
       host: process.env.POSTGRES_HOST,
       port: Number(process.env.POSTGRES_PORT),
-      username: process.env.POSGRES_USER,
-      password: process.env.POSGRES_PASSWORD,
-      database: process.env.POSGRES_DB,
+      username: process.env.POSTGRES_USER,
+      password: process.env.POSTGRES_PASSWORD,
+      database: process.env.POSTGRES_DB,
       models: [User, Role, UserRoles, Post],
       autoLoadModels: true
     }),
