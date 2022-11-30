@@ -1,6 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { use } from 'passport';
 import { RolesService } from 'src/roles/roles.service';
+import { AddRoleDto } from './dto/add-role.dto';
+import { BanUserDto } from './dto/ban-user.dto';
 import { CreateUserDto } from './dto/create-user';
 import { User } from './user.model';
 
@@ -20,15 +23,35 @@ export class UsersService {
     }
 
     async getAllUsers(){
-        return this.userRepository.findAll({include: 'roles'});
+        return await this.userRepository.findAll({include: 'roles'});
     }
 
     async getUserByEmail(email:string){
-        return this.userRepository.findOne({where: {email:email}, include: {all: true}});
+        return await this.userRepository.findOne({where: {email:email}, include: {all: true}});
     }
 
     async addRole(dto: AddRoleDto){
-        return this.roleService.createRole();
+        const user = await this.userRepository.findOne({where: {id: dto.userId}});
+        const role =  await this.roleService.getRoleByValue(dto.value);
+
+        if(user && role){
+            user.$add('role', role.id);
+            return dto;
+        }
+
+        throw new HttpException('User or role not found', HttpStatus.NOT_FOUND);
     }
     
+    async banUser(dto: BanUserDto){
+        const user = await this.userRepository.findOne({where: {id: dto.userId}});
+
+        if(!user){
+            throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        }
+        
+        user.banned = true;
+        user.banReason = dto.banReason;
+        await user.save();
+        return user;
+    }
 }

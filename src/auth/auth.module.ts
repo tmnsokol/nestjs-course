@@ -23,6 +23,6 @@ import { PassportModule } from '@nestjs/passport';
     }),
     PassportModule
   ],
-  exports: [AuthService, /*JwtModule,*/] 
+  exports: [AuthService, JwtModule] 
 })
 export class AuthModule {}
