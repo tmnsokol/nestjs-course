@@ -4,7 +4,7 @@ import { use } from 'passport';
 import { RolesService } from 'src/roles/roles.service';
 import { AddRoleDto } from './dto/add-role.dto';
 import { BanUserDto } from './dto/ban-user.dto';
-import { CreateUserDto } from './dto/create-user';
+import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './user.model';
 
 @Injectable()
@@ -48,7 +48,7 @@ export class UsersService {
         if(!user){
             throw new HttpException('User not found', HttpStatus.NOT_FOUND);
         }
-        
+
         user.banned = true;
         user.banReason = dto.banReason;
         await user.save();
